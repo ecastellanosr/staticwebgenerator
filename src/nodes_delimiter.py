@@ -125,19 +125,23 @@ def combine_same_type_nodes(nodes):
     last_type = None
     while i < len(nodes):
         if last_type == nodes[i].text_type:
-            new_text = new_nodes[-1].text + nodes[i].text
+            new_text = new_nodes[-1].text + " " +  nodes[i].text
             new_nodes[-1] = TextNode(new_text,nodes[i].text_type)
+            i += 1
+        elif i == len(nodes)-1:
+            new_nodes.append(nodes[i])
             i += 1
         elif (nodes[i].text_type == TextType.IMAGE or 
             nodes[i].text_type == TextType.IMAGE or 
             nodes[i].text_type != nodes[i+1].text_type):
             
-            new_nodes.append(nodes[i],nodes[i+1])
+            new_nodes.append(nodes[i])
+            new_nodes.append(nodes[i+1])
             last_type = nodes[i+1].text_type
             i += 2
         
         else:
-            new_text = nodes[i].text + nodes[i+1].text
+            new_text = nodes[i].text + " " + nodes[i+1].text
             new_nodes.append(TextNode(new_text,nodes[i].text_type))
             last_type = nodes[i].text_type
             i += 2

@@ -150,7 +150,7 @@ class Test_Images_Links_Delimiter(unittest.TestCase):
             TextNode("This is text with [braces] word", TextType.TEXT),
             ])
         
-    def test_text_with_excalamtion_braces(self):
+    def test_text_with_exclamation_braces(self):
         node = TextNode("This is text with ![braces] word", TextType.TEXT)
         new_nodes = split_nodes_delimiter(node)
         self.assertEqual(new_nodes, [
