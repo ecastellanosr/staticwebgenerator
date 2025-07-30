@@ -14,14 +14,14 @@ def extract_title(markdown):
                 return block[1:].lstrip()
     raise Exception("Could not extract title as there in no h1 header in markdown")
 
-def generate_page(from_path, template_path,dest_path):
+def generate_page(from_path, template_path,dest_path,basepath):
     print(f'Generating page from {from_path} to {dest_path} using {template_path}')
     try:
         with open(from_path, "r") as f:
             markdown_string = f.read()  
     except Exception as e:
         return f"Error: {e}"
-    
+     
     try:
         with open(template_path, "r") as f:
             template_string = f.read() 
@@ -34,6 +34,8 @@ def generate_page(from_path, template_path,dest_path):
     markdown_node = markdown_to_html_node(markdown_string)
     html = markdown_node.to_html()
     template_string = template_string.replace('<article>{{ Content }}</article>',f"<article>{ html }</article>")
+    template_string = template_string.replace('href="/',f'href="{basepath}')
+    template_string = template_string.replace('src="/',f'src="{basepath}')
     
     try:
         with open(dest_path, "w") as f:
@@ -42,7 +44,7 @@ def generate_page(from_path, template_path,dest_path):
         return f"Error: {e}"
 
   
-def generate_pages_recursive(dir_from_path, template_path, dir_dest_path):
+def generate_pages_recursive(dir_from_path, template_path, dir_dest_path,basepath):
     #it copies the directory objects and recursively pastes it to the same directory but in the new destination
     if not os.path.exists(dir_dest_path):
         os.mkdir(dir_dest_path)
@@ -58,5 +60,5 @@ def generate_pages_recursive(dir_from_path, template_path, dir_dest_path):
             elif os.path.isfile(filepath) and file.endswith(".md"):
                 filename = file.split(".",1)[0]
                 destination = os.path.join(dir_dest_path,filename + ".html")
-                generate_page(filepath,template_path,destination)
+                generate_page(filepath,template_path,destination,basepath)
         return

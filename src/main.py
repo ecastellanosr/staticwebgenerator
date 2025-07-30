@@ -1,24 +1,31 @@
 import os
 import shutil
+import sys
 from generate_pages import generate_pages_recursive
 
+
 def main():
+    basepath = sys.argv[0]
+    if len(sys.argv) < 1:
+       basepath = "/" 
+      
+    
     current_path =  os.path.dirname(__file__)
     static_web_generator_path = os.path.split(current_path)[0]
-    public = os.path.join(static_web_generator_path,"public") 
+    docs = os.path.join(static_web_generator_path,"docs") 
     static = os.path.join(static_web_generator_path,"static")
     
-    if os.path.exists(public):
-        public_files =  os.listdir(public)
-        if public_files:
+    if os.path.exists(docs):
+        docs_files =  os.listdir(docs)
+        if docs_files:
             print("removing files")
-            shutil.rmtree(public)
+            shutil.rmtree(docs)
     if os.path.exists(static):
-        copypaste_directories(static,public)
+        copypaste_directories(static,docs)
         
         content = os.path.join(static_web_generator_path,"content") 
         template = os.path.join(static_web_generator_path,"template.html") 
-        generate_pages_recursive(content,template,public)
+        generate_pages_recursive(content,template,docs,basepath)
         
             
 
