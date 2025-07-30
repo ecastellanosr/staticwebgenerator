@@ -2,6 +2,7 @@ from enum import Enum
 from htmlnode import ParentNode,LeafNode
 from textnode import TextNode, TextType
 from nodes_delimiter import split_nodes_delimiter, combine_same_type_nodes
+import re
 
 class BlockType(Enum):
     PARAGRAPH = "paragraph"
@@ -20,6 +21,7 @@ def markdown_to_blocks(markdown):
     for block in markdowns:
         if block == "":
             markdowns.remove(block)
+            
     return markdowns
         
 def block_to_block_type(block):
@@ -39,8 +41,12 @@ def block_to_block_type(block):
 def markdown_to_html_node(markdown):
     blocks = markdown_to_blocks(markdown)
     children_nodes = []
+    code_block_counter = 0
     for block in blocks:
         htmlnode = block_to_html_node(block)
+        if block_to_block_type(block) == BlockType.CODE:
+            code_block_counter += 1
+            htmlnode = code_block_to_html_node(block,markdown,code_block_counter)
         children_nodes.append(htmlnode)
     return ParentNode("div",children_nodes,None)
         
@@ -48,8 +54,8 @@ def markdown_to_html_node(markdown):
         
 def block_to_html_node(block):
     if block_to_block_type(block) == BlockType.CODE:
-        codeNode = LeafNode(None,block[3:-3].lstrip())
-        return ParentNode("pre",[ParentNode("code",[codeNode])])
+        return ""
+
     
     elif block_to_block_type(block) == BlockType.HEADING:
         counter = 0
@@ -74,6 +80,13 @@ def block_to_html_node(block):
     else:
         childrenNodes = text_to_children(block,BlockType.PARAGRAPH)
         return ParentNode("p",childrenNodes,None)
+    
+def code_block_to_html_node(block,markdown,counter):
+    allcodes = re.findall(r'```([^`]*)```',markdown)
+    codeText = allcodes[counter-1]
+    codeNode = LeafNode(None,codeText.strip())
+    # codeNode = LeafNode(None,block[3:-3].lstrip())
+    return ParentNode("pre",[ParentNode("code",[codeNode])])
 
 def text_to_children(block,blocktype):
     children = []
@@ -88,6 +101,8 @@ def text_to_children(block,blocktype):
         return children
     elif blocktype == BlockType.QUOTE:
         for line in lines:
+            if len(line.strip()) == 1:
+                continue
             line = line.split(' ', 1)[1]
             nodes = split_nodes_delimiter(TextNode(line,TextType.TEXT))
             children += nodes
