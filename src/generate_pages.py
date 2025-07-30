@@ -56,7 +56,7 @@ def generate_pages_recursive(dir_from_path, template_path, dir_dest_path,basepat
             filepath = os.path.join(dir_from_path,file)
             if os.path.isdir(filepath):
                 destination = os.path.join(dir_dest_path,file)
-                generate_pages_recursive(filepath,template_path,destination)
+                generate_pages_recursive(filepath,template_path,destination,basepath)
             elif os.path.isfile(filepath) and file.endswith(".md"):
                 filename = file.split(".",1)[0]
                 destination = os.path.join(dir_dest_path,filename + ".html")

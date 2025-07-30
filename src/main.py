@@ -5,10 +5,9 @@ from generate_pages import generate_pages_recursive
 
 
 def main():
-    basepath = sys.argv[0]
-    if len(sys.argv) < 1:
-       basepath = "/" 
-      
+    basepath = sys.argv[1]
+    if len(sys.argv) < 2:
+       basepath = "/"
     
     current_path =  os.path.dirname(__file__)
     static_web_generator_path = os.path.split(current_path)[0]
@@ -26,9 +25,6 @@ def main():
         content = os.path.join(static_web_generator_path,"content") 
         template = os.path.join(static_web_generator_path,"template.html") 
         generate_pages_recursive(content,template,docs,basepath)
-        
-            
-
                 
 def copypaste_directories(old_directory,new_directory):
     #it copies the directory objects and recursively pastes it to the same directory but in the new destination
